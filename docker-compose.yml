@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  web:
+    image: ckan
+    build:
+      context: .
+    environment:
+      CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@postgres/ckan
+      CKAN_DATASTORE_WRITE_URL: postgresql://datastore:datastore@postgres/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://datastore_ro:datastore_ro@postgres/datastore
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/0
+      CKAN_SITE_URL: http://localhost:8000
+      CKAN_BEAKER_SESSION_SECRET: test_session_secret
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+      - solr
+      - redis
+
+  worker:
+    image: ckan
+    build:
+      context: .
+    environment:
+      CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@postgres/ckan
+      CKAN_DATASTORE_WRITE_URL: postgresql://datastore:datastore@postgres/datastore
+      CKAN_DATASTORE_READ_URL: postgresql://datastore_ro:datastore_ro@postgres/datastore
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/0
+      CKAN_SITE_URL: http://localhost:8080
+      CKAN_BEAKER_SESSION_SECRET: test_session_secret
+    command:
+      - /opt/ckan/worker.sh
+    network_mode: service:web
+    depends_on:
+      - web
+      - postgres
+      - solr
+      - redis
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+
+  solr:
+    image: solr:8
+    volumes:
+      - ./docker/solr/ckan:/tmp/ckan # config-set
+    command:
+      - solr-precreate
+      - ckan
+      - /tmp/ckan
+
+  redis:
+    image: redis:6
+
+networks:
+  default:
+    name: ckan
