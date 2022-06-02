@@ -1,9 +1,14 @@
 FROM ubuntu:20.04
 
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
 ENV CKAN_HOME /opt/ckan
 ENV CKAN_INI $CKAN_HOME/ckan.ini
 ENV LANG C.UTF-8
 ENV TZ UTC
+ENV AWS_KEY=$AWS_ACCESS_KEY_ID
+ENV AWS_SECRET=$AWS_SECRET_ACCESS_KEY
 
 RUN set -ex; \
     apt-get update; \
@@ -18,7 +23,11 @@ RUN set -ex; \
     pip install setuptools==44.1.0; \
     pip install -e git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan; \
     pip install -r src/ckan/requirements.txt; \
-    pip install gunicorn
+    pip install gunicorn;
+
+RUN set -ex; \
+    pip install boto3; \
+    pip install -e "git+https://github.com/DataShades/ckanext-cloudstorage.git#egg=ckanext-cloudstorage"
 
 RUN set -ex; \
     # ckanext-xloader

@@ -5,6 +5,9 @@ services:
     image: ckan
     build:
       context: .
+      args:
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     environment:
       CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@postgres/ckan
       CKAN_DATASTORE_WRITE_URL: postgresql://datastore:datastore@postgres/datastore
@@ -24,6 +27,9 @@ services:
     image: ckan
     build:
       context: .
+      args:
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     environment:
       CKAN_SQLALCHEMY_URL: postgresql://ckan:ckan@postgres/ckan
       CKAN_DATASTORE_WRITE_URL: postgresql://datastore:datastore@postgres/datastore
@@ -45,6 +51,8 @@ services:
     image: postgres:13
     environment:
       POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
     volumes:
       - ./docker/postgres:/docker-entrypoint-initdb.d
 
