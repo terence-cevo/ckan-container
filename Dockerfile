@@ -26,8 +26,8 @@ RUN set -ex; \
     pip install gunicorn;
 
 RUN set -ex; \
-    pip install boto3; \
-    pip install -e "git+https://github.com/DataShades/ckanext-cloudstorage.git#egg=ckanext-cloudstorage"
+    pip install -e "git+https://github.com/datagovau/ckanext-s3filestore#egg=ckanext-s3filestore[requirements]"; \
+    pip install -e "git+https://github.com/datagovau/ckanext-s3filestore#egg=ckanext-s3filestore"
 
 RUN set -ex; \
     # ckanext-xloader
