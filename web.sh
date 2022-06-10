@@ -24,10 +24,9 @@ ckan config-tool $CKAN_INI "ckanext.s3filestore.acl = private"
 echo "Setting ckanext.s3filestore.check_access_on_startup"
 ckan config-tool $CKAN_INI "ckanext.s3filestore.check_access_on_startup = false"
 
-if [[ -z ${AWS_KEY} || -z ${AWS_SECRET} ]]; then
+if [ -z ${AWS_KEY} ] || [ -z ${AWS_SECRET} ]; then
   echo "Setting ckanext.s3filestore.aws_use_ami_role"
   ckan config-tool $CKAN_INI "ckanext.s3filestore.aws_use_ami_role =  true"
-
 else
     echo 'ckanext.s3filestore.aws_access_key_id'
     ckan config-tool $CKAN_INI "ckanext.s3filestore.aws_access_key_id=$AWS_KEY"
